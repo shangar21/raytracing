@@ -112,4 +112,7 @@ template <typename T>
 inline vec3<T> unit_vector(const vec3<T>& v){
 	return v / v.length();
 }
+
+typedef vec3<double> point;
+typedef vec3<double> color;
 #endif

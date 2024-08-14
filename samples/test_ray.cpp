@@ -7,7 +7,7 @@ int main() {
     vec3<double> direction(1.0, 2.0, 3.0);
 
     // Create a ray with the above origin and direction
-    ray<double> r(origin, direction);
+    Ray<double> r(origin, direction);
 
     // Test origin
     vec3<double> test_origin = r.origin();

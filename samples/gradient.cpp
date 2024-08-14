@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-vec3<double> ray_color(ray<double>& r){
+vec3<double> ray_color(Ray<double>& r){
 	vec3<double> unit_direction = unit_vector(r.direction());
 	double a = 0.5 * (unit_direction.y() + 1.0);
 	return (1.0 - a) * vec3<double>(1.0, 1.0, 1.0) + a * vec3<double>(0.7, 0.0, 0.0);
@@ -38,7 +38,7 @@ int main() {
 		for(int i = 0; i < image_width; i++){
 			vec3<double> pixel_center = pixel_00 + ((double)i * pixel_delta_u) + ((double)j * pixel_delta_v);
 			vec3<double> ray_dir = pixel_center - camera_center;
-			ray r = ray(camera_center, ray_dir);
+			Ray r = Ray(camera_center, ray_dir);
 			vec3<double> pixel = ray_color(r);
 			writeColor(std::cout, pixel);
 		}
