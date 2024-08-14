@@ -6,16 +6,16 @@
 
 using color = vec3<double>;
 
-void writeColor(std::ostream& out, const color pixel){
-	double r = pixel.x();
-	double g = pixel.y();
-	double b = pixel.z();
+void writeColor(std::ostream &out, const color pixel) {
+  double r = pixel.x();
+  double g = pixel.y();
+  double b = pixel.z();
 
-	int rbyte = int(255.99 * r);
-	int gbyte = int(255.99 * g);
-	int bbyte = int(255.99 * b);
+  int rbyte = int(255.99 * r);
+  int gbyte = int(255.99 * g);
+  int bbyte = int(255.99 * b);
 
-	out << rbyte << ' ' << gbyte << ' ' << bbyte << '\n';
+  out << rbyte << ' ' << gbyte << ' ' << bbyte << '\n';
 }
 
 #endif
