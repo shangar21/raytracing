@@ -10,7 +10,7 @@ class Camera {
 public:
   double aspect_ratio = 16.0 / 9.0;
   int image_width = 1920;
-	int samples_per_pixel = 3;
+  int samples_per_pixel = 3;
   int image_height = int(image_width / aspect_ratio);
 
   void render_ppm(const Hittable &world) {
@@ -40,14 +40,14 @@ public:
 #pragma omp parallel for
     for (int j = 0; j < image_height; j++) {
       for (int i = 0; i < image_width; i++) {
-        color pixel (0.0, 0.0, 0.0);
+        color pixel(0.0, 0.0, 0.0);
 
-				for (int s = 0; s < samples_per_pixel; s++){
-					Ray<double> r = get_ray_sample(i, j);
-					pixel += ray_color(r, world);
-				}
+        for (int s = 0; s < samples_per_pixel; s++) {
+          Ray<double> r = get_ray_sample(i, j);
+          pixel += ray_color(r, world);
+        }
 
-				pixel = pixel * pixel_samples_scale;
+        pixel = pixel * pixel_samples_scale;
 
         R.at<double>(j, i) = intensity.clamp(pixel.x());
         G.at<double>(j, i) = intensity.clamp(pixel.y());
@@ -64,8 +64,8 @@ private:
   point pixel00_loc;
   point pixel_delta_u;
   point pixel_delta_v;
-	double pixel_samples_scale;
-	Interval<double> intensity = Interval<double>(0.0, 0.999);
+  double pixel_samples_scale;
+  Interval<double> intensity = Interval<double>(0.0, 0.999);
 
   void initialize() {
     double fl = 1.0;
@@ -82,19 +82,20 @@ private:
                         viewport_v / 2.0;
     pixel00_loc = viewport_ul + 0.5 * (pixel_delta_u + pixel_delta_v);
 
-		pixel_samples_scale = 1.0/samples_per_pixel;
+    pixel_samples_scale = 1.0 / samples_per_pixel;
   }
 
-	point sample_square() const {
-		return point(random_double() - 0.5, random_double() - 0.5, 0);
-	}
+  point sample_square() const {
+    return point(random_double() - 0.5, random_double() - 0.5, 0);
+  }
 
-	Ray<double> get_ray_sample(int i, int j) const {
-		point offset = sample_square();
-		point pixel_sample = pixel00_loc + ((i + offset.x()) * pixel_delta_u) + ((j + offset.y()) * pixel_delta_v);
-		point ray_direction = pixel_sample - camera_center;
-		return Ray(camera_center, ray_direction);
-	}
+  Ray<double> get_ray_sample(int i, int j) const {
+    point offset = sample_square();
+    point pixel_sample = pixel00_loc + ((i + offset.x()) * pixel_delta_u) +
+                         ((j + offset.y()) * pixel_delta_v);
+    point ray_direction = pixel_sample - camera_center;
+    return Ray(camera_center, ray_direction);
+  }
 
   color ray_color(const Ray<double> &r, const Hittable &world) {
     HitRecord rec;

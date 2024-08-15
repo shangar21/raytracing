@@ -23,11 +23,13 @@ public:
 
   Interval get_empty() { return Interval(); }
 
-	T clamp(T x) const {
-		if (x < min) return min;
-		if (x > max) return max;
-		return x;
-	}
+  T clamp(T x) const {
+    if (x < min)
+      return min;
+    if (x > max)
+      return max;
+    return x;
+  }
 };
 
 #endif

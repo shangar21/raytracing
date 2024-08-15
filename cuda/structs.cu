@@ -1,10 +1,10 @@
 struct point {
-	double x;
-	double y;
-	double z;
+  double x;
+  double y;
+  double z;
 }
 
 struct ray {
-	point origin;
-	point direction;
+  point origin;
+  point direction;
 }

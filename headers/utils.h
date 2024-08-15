@@ -13,12 +13,10 @@ template <typename T> inline double numeric_infinity() {
   return std::numeric_limits<T>::infinity();
 }
 
-inline double random_double() {
-    return std::rand() / (RAND_MAX + 1.0);
-}
+inline double random_double() { return std::rand() / (RAND_MAX + 1.0); }
 
 inline double random_double(double min, double max) {
-    return min + (max-min)*random_double();
+  return min + (max - min) * random_double();
 }
 
 #endif
