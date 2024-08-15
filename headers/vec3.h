@@ -22,18 +22,21 @@ public:
     e[0] += v.x();
     e[1] += v.y();
     e[2] += v.z();
+		return *this;
   }
 
   vec3 &operator*=(const vec3 &v) {
     e[0] *= v.x();
     e[1] *= v.y();
     e[2] *= v.z();
+		return *this;
   }
 
   vec3 &operator/=(const vec3 &v) {
     e[0] /= v.x();
     e[1] /= v.y();
     e[2] /= v.z();
+		return *this;
   }
 
   T length() const {

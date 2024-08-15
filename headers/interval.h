@@ -9,7 +9,7 @@ public:
 
   Interval() : min(numeric_infinity<T>()), max(-numeric_infinity<T>()) {}
 
-  Interval(double min, double max) : min(min), max(max) {}
+  Interval(T min, T max) : min(min), max(max) {}
 
   double size() const { return max - min; }
 
@@ -22,6 +22,12 @@ public:
   }
 
   Interval get_empty() { return Interval(); }
+
+	T clamp(T x) const {
+		if (x < min) return min;
+		if (x > max) return max;
+		return x;
+	}
 };
 
 #endif
