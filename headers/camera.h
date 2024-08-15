@@ -4,6 +4,7 @@
 #include "hittable.h"
 #include "utils.h"
 #include "vec3.h"
+#include "color.h"
 
 class Camera {
 public:
@@ -35,6 +36,7 @@ public:
     cv::Mat G = cv::Mat::zeros(image_height, image_width, CV_64F);
     cv::Mat B = cv::Mat::zeros(image_height, image_width, CV_64F);
 
+		#pragma omp parallel for
     for (int j = 0; j < image_height; j++) {
       for (int i = 0; i < image_width; i++) {
         point pixel_center = pixel00_loc + ((double)i * pixel_delta_u) +
