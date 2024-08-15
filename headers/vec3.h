@@ -8,7 +8,7 @@ template <typename T> class vec3 {
 public:
   T e[3];
 
-	vec3() : e{0.0, 0.0, 0.0} {}
+  vec3() : e{0.0, 0.0, 0.0} {}
   vec3(T x, T y, T z) : e{x, y, z} {}
 
   T x() const { return e[0]; }

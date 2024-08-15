@@ -21,7 +21,7 @@ int main() {
 
   HittableList world;
   world.add(std::make_shared<Sphere>(point(0.0, 0.0, -1.0), 0.5));
-	world.add(std::make_shared<Sphere>(point(0.0, -100.5, -1.0), 100));
+  world.add(std::make_shared<Sphere>(point(0.0, -100.5, -1.0), 100));
 
   double fl = 1.0;
   double v_h = 2.0;

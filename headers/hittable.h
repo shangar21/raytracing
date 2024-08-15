@@ -1,9 +1,9 @@
 #ifndef HITTABLE_H
 #define HITTABLE_H
 
-#include "vec3.h"
-#include "ray.h"
 #include "interval.h"
+#include "ray.h"
+#include "vec3.h"
 #include <memory>
 #include <vector>
 
@@ -14,7 +14,7 @@ public:
   double t;
   bool front;
 
-	HitRecord() {}
+  HitRecord() {}
 
   void set_face_normal(const Ray<double> &r, const point &outward_normal) {
     front = dot(r.direction(), outward_normal);
@@ -43,13 +43,14 @@ public:
   void add(hittable_ptr object) { objects.push_back(object); }
 
   bool hit(const Ray<double> &r, Interval<double> ray_t,
-           HitRecord &rec) const override{
+           HitRecord &rec) const override {
     HitRecord temp_rec;
     bool hit_anything = false;
     double closest_so_far = ray_t.max;
 
     for (hittable_ptr object : objects) {
-      if (object->hit(r, Interval<double>(ray_t.min, closest_so_far), temp_rec)) {
+      if (object->hit(r, Interval<double>(ray_t.min, closest_so_far),
+                      temp_rec)) {
         hit_anything = true;
         closest_so_far = temp_rec.t;
         rec = temp_rec;

@@ -13,11 +13,11 @@
 #include "utils.h"
 
 // Headers
+#include "camera.h"
 #include "color.h"
 #include "hittable.h"
 #include "ray.h"
-#include "vec3.h"
 #include "sphere.h"
-#include "camera.h"
+#include "vec3.h"
 
 #endif
