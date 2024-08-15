@@ -3,7 +3,7 @@
 color ray_color(const Ray<double> &r, const Hittable &world) {
   HitRecord rec;
 
-  if (world.hit(r, 0, infinity, rec)) {
+  if (world.hit(r, Interval<double>(0.0, infinity), rec)) {
     return 0.5 * (rec.normal + color(1.0, 1.0, 1.0));
   }
 
@@ -21,7 +21,7 @@ int main() {
 
   HittableList world;
   world.add(std::make_shared<Sphere>(point(0.0, 0.0, -1.0), 0.5));
-  world.add(std::make_shared<Sphere>(point(0.0, -100.0, -1.0), 100));
+	world.add(std::make_shared<Sphere>(point(0.0, -100.5, -1.0), 100));
 
   double fl = 1.0;
   double v_h = 2.0;
