@@ -1,16 +1,32 @@
+#include "ray.cu"
+#include "utils.cu"
 #include <cuda_runtime.h>
+#include <math.h>
 
-__host__ __device__ bool hit(double radius, double *center, double *ray_o,
-                             double *ray_d) {
-  double oc_x = center[0] - ray_o[0];
-  double oc_y = center[1] - ray_o[1];
-  double oc_z = center[2] - ray_o[2];
+struct sphere {
+  double3 center;
+  double radius;
 
-  double a = ray_d[0] * ray_d[0] + ray_d[1] * ray_d[1] + ray_d[2] * ray_d[2];
-  double b = -2.0 * (ray_d[0] * oc_x + ray_d[1] * oc_y + ray_d[2] * oc_z);
-  double c = oc_x * oc_x + oc_y * oc_y + oc_z * oc_z - (radius * radius);
+  __host__ __device__ sphere(double3 c, double r)
+      : center(c), radius(r) {}
 
-  double discriminant = b * b - 4 * a * c;
+  __host__ __device__ bool hit(const ray r, double& t, double3& normal) {
+    double3 oc = center - r.orig;
+    double a = length_squared(r.dir);
+    double b = -2.0 * dot(r.dir, oc);
+    double c = length_squared(oc) - (radius * radius);
+    double discriminant = b * b - 4 * a * c;
 
-  return discriminant >= 0;
-}
+    if (discriminant < 0){
+      return false;
+		}
+
+    t = -b - sqrt(discriminant) / (2.0 * a);
+    double3 p = r.at(t);
+    double3 outward_normal = (p - center) / radius;
+		bool front = dot(r.dir, outward_normal);
+		normal = front ? outward_normal : -outward_normal;
+
+    return true;
+  }
+};

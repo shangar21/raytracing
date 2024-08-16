@@ -1,35 +1,21 @@
 #include <cuda_runtime.h>
 #include <curand_kernel.h>
 #include <iostream>
+#include "sphere.cu"
+#include "ray.cu"
 
 #define N_SAMPLES 3
-
-__host__ __device__ bool hit(double radius, double *center, double *ray_o,
-                             double *ray_d) {
-  double oc_x = center[0] - ray_o[0];
-  double oc_y = center[1] - ray_o[1];
-  double oc_z = center[2] - ray_o[2];
-
-  double a = ray_d[0] * ray_d[0] + ray_d[1] * ray_d[1] + ray_d[2] * ray_d[2];
-  double b = -2.0 * (ray_d[0] * oc_x + ray_d[1] * oc_y + ray_d[2] * oc_z);
-  double c = oc_x * oc_x + oc_y * oc_y + oc_z * oc_z - (radius * radius);
-
-  double discriminant = b * b - 4 * a * c;
-
-  return discriminant >= 0;
-}
 
 __global__ void init_curand_state(curandState *state, unsigned long long seed) {
   int idx = threadIdx.x + blockIdx.x * blockDim.x;
   curand_init(seed, idx, 0, &state[idx]);
 }
 
-__global__ void render_kernel(
-    double *R, double *G, double *B, curandState *state, int image_width,
-    int image_height, double pixel00_x, double pixel00_y, double pixel00_z,
-    double pixel_delta_u_x, double pixel_delta_u_y, double pixel_delta_u_z,
-    double pixel_delta_v_x, double pixel_delta_v_y, double pixel_delta_v_z,
-    double radius, double sphere_o_x, double sphere_o_y, double sphere_o_z) {
+__global__ void render_kernel(double *R, double *G, double *B,
+                              curandState *state, int image_width,
+                              int image_height, double3 pixel00,
+                              double3 pixel_delta_u, double3 pixel_delta_v,
+                              sphere s) {
   int i = blockIdx.x * blockDim.x + threadIdx.x;
   int j = blockIdx.y * blockDim.y + threadIdx.y;
 
@@ -38,36 +24,33 @@ __global__ void render_kernel(
 
   int idx = j * image_width + i;
 
-  double r, g, b;
-  double ray_o_x, ray_o_y, ray_o_z;
   double ray_d_x, ray_d_y, ray_d_z;
-  double center[3] = {sphere_o_x, sphere_o_y, sphere_o_z};
 
   curandState localState = state[idx];
 
   for (int _ = 0; _ < N_SAMPLES; _++) {
     double offset_x = curand_uniform_double(&localState) - 0.5;
     double offset_y = curand_uniform_double(&localState) - 0.5;
-    double offset_z = curand_uniform_double(&localState) - 0.5;
-    ray_o_x = 0.0;
-    ray_o_y = 0.0;
-    ray_o_z = 0.0;
-    ray_d_x = pixel00_x + ((i + offset_x) * pixel_delta_u_x) +
-              ((j + offset_y) * pixel_delta_v_x);
-    ray_d_y = pixel00_y + ((i + offset_y) * pixel_delta_u_y) +
-              ((j + offset_y) * pixel_delta_v_y);
-    ray_d_z = pixel00_z + ((i + offset_z) * pixel_delta_u_z) +
-              ((j + offset_y) * pixel_delta_v_z);
+		double offset_z = curand_uniform_double(&localState) - 0.5;
+    ray_d_x = pixel00.x + ((i + offset_x) * pixel_delta_u.x) +
+              ((j + offset_x) * pixel_delta_v.x);
+    ray_d_y = pixel00.y + ((i + offset_y) * pixel_delta_u.y) +
+              ((j + offset_y) * pixel_delta_v.y);
+    ray_d_z = pixel00.z + ((i + offset_z) * pixel_delta_u.z) +
+              ((j + offset_z) * pixel_delta_v.z);
 
-    double ray_o[3] = {ray_o_x, ray_o_y, ray_o_z};
-    double ray_d[3] = {ray_d_x, ray_d_y, ray_d_z};
+    double3 ray_o = make_double3(0.0, 0.0, 0.0);
+    double3 ray_d = make_double3(ray_d_x, ray_d_y, ray_d_z);
 
-    // TO-DO: Add code to check if ray defined by ray_o_* and ray_d_* intersects
-    // a sphere
-    if (hit(radius, center, ray_o, ray_d)) {
-      R[idx] = 1.0;
-      G[idx] = 0.0;
-      B[idx] = 0.5;
+		ray r = ray(ray_o, ray_d);
+
+		double t = 0.0;
+		double3 normal = make_double3(1.0, 0.0, 0.5);
+
+    if (s.hit(r, t, normal)) {
+      R[idx] = normal.x;
+      G[idx] = normal.y;
+      B[idx] = normal.z;
     }
   }
 }
@@ -75,13 +58,16 @@ __global__ void render_kernel(
 // Function to initialize CUDA-related data and call the kernel
 extern "C" void
 render_image(double *h_R, double *h_G, double *h_B, int image_width,
-             int image_height, double pixel00_x, double pixel00_y,
-             double pixel00_z, double pixel_delta_u_x, double pixel_delta_u_y,
-             double pixel_delta_u_z, double pixel_delta_v_x,
-             double pixel_delta_v_y, double pixel_delta_v_z, double radius,
-             double sphere_o_x, double sphere_o_y, double sphere_o_z) {
+             int image_height, double* pixel00_ptr, double* pixel_delta_u_ptr, double* pixel_delta_v_ptr, double radius, double* center_ptr) {
 
   const int num_pixels = image_width * image_height;
+
+	double3 pixel00 = doublePtrToDouble3(pixel00_ptr);
+	double3 pixel_delta_u = doublePtrToDouble3(pixel_delta_u_ptr);
+	double3 pixel_delta_v = doublePtrToDouble3(pixel_delta_v_ptr);
+	double3 center = doublePtrToDouble3(center_ptr);
+
+	sphere s = sphere(center, radius);
 
   double *d_R, *d_G, *d_B;
   curandState *d_state;
@@ -99,10 +85,8 @@ render_image(double *h_R, double *h_G, double *h_B, int image_width,
   // Launch the kernel to render the image
   render_kernel<<<dim3((image_width + 15) / 16, (image_height + 15) / 16),
                   dim3(16, 16)>>>(
-      d_R, d_G, d_B, d_state, image_width, image_height, pixel00_x, pixel00_y,
-      pixel00_z, pixel_delta_u_x, pixel_delta_u_y, pixel_delta_u_z,
-      pixel_delta_v_x, pixel_delta_v_y, pixel_delta_v_z, radius, sphere_o_x,
-      sphere_o_y, sphere_o_z);
+      d_R, d_G, d_B, d_state, image_width, image_height, pixel00, pixel_delta_u,
+      pixel_delta_v, s);
 
   // Copy the result back to the host
   cudaMemcpy(h_R, d_R, num_pixels * sizeof(double), cudaMemcpyDeviceToHost);
