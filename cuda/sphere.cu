@@ -20,10 +20,13 @@ struct sphere {
       return false;
     }
 
-    t = -b - sqrt(discriminant) / (2.0 * a);
+		double t1 = (-b - sqrt(discriminant)) / (2.0 * a);
+		double t2 = (-b + sqrt(discriminant)) / (2.0 * a);
+
+    t = t1 > 0 ? t1 : t2;
     double3 p = r.at(t);
     double3 outward_normal = (p - center) / radius;
-    bool front = dot(r.dir, outward_normal);
+    bool front = dot(r.dir, outward_normal) < 0.0;
     normal = front ? outward_normal : -outward_normal;
 
     return true;

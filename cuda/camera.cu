@@ -4,7 +4,7 @@
 #include <curand_kernel.h>
 #include <iostream>
 
-#define N_SAMPLES 3
+#define N_SAMPLES 1
 
 __global__ void init_curand_state(curandState *state, unsigned long long seed) {
   int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -29,16 +29,16 @@ __global__ void render_kernel(double *R, double *G, double *B,
   curandState localState = state[idx];
 
   for (int _ = 0; _ < N_SAMPLES; _++) {
-    double offset_x = curand_uniform_double(&localState) - 0.5;
-    double offset_y = curand_uniform_double(&localState) - 0.5;
-    double offset_z = curand_uniform_double(&localState) - 0.5;
+    double offset_x = 0.0;// curand_uniform_double(&localState) - 0.5;
+    double offset_y = 0.0;//curand_uniform_double(&localState) - 0.5;
+    double offset_z = 0.0;//curand_uniform_double(&localState) - 0.5;
     ray_d_x = pixel00.x + ((i + offset_x) * pixel_delta_u.x) +
               ((j + offset_x) * pixel_delta_v.x);
     ray_d_y = pixel00.y + ((i + offset_y) * pixel_delta_u.y) +
               ((j + offset_y) * pixel_delta_v.y);
     ray_d_z = pixel00.z + ((i + offset_z) * pixel_delta_u.z) +
               ((j + offset_z) * pixel_delta_v.z);
-
+		
     double3 ray_o = make_double3(0.0, 0.0, 0.0);
     double3 ray_d = make_double3(ray_d_x, ray_d_y, ray_d_z);
 
@@ -59,6 +59,10 @@ __global__ void render_kernel(double *R, double *G, double *B,
 			B[idx] = (1.0 - a) + (a * 0.1);
 		}
   }
+
+	//R[idx] /= (1.0 / (double)N_SAMPLES);
+	//G[idx] /= (1.0 / (double)N_SAMPLES);
+	//B[idx] /= (1.0 / (double)N_SAMPLES);
 }
 
 // Function to initialize CUDA-related data and call the kernel
