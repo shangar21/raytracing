@@ -31,6 +31,12 @@ __host__ __device__ double length_squared(const double3 &v) {
   return dot(v, v);
 }
 
+__host__ __device__ double clamp(const double v, double l, double u){
+	if (v < l) return l;
+	if (v > u) return u;
+	return v;
+}
+
 // Addition of two double3 vectors
 __host__ __device__ double3 operator+(const double3 &a, const double3 &b) {
   return make_double3(a.x + b.x, a.y + b.y, a.z + b.z);

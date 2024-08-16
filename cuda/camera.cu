@@ -4,7 +4,7 @@
 #include <curand_kernel.h>
 #include <iostream>
 
-#define N_SAMPLES 1
+#define N_SAMPLES 10
 
 __global__ void init_curand_state(curandState *state, unsigned long long seed) {
   int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -29,9 +29,9 @@ __global__ void render_kernel(double *R, double *G, double *B,
   curandState localState = state[idx];
 
   for (int _ = 0; _ < N_SAMPLES; _++) {
-    double offset_x = 0.0; // curand_uniform_double(&localState) - 0.5;
-    double offset_y = 0.0; // curand_uniform_double(&localState) - 0.5;
-    double offset_z = 0.0; // curand_uniform_double(&localState) - 0.5;
+    double offset_x = curand_uniform_double(&localState) - 0.5;
+    double offset_y = curand_uniform_double(&localState) - 0.5;
+    double offset_z = curand_uniform_double(&localState) - 0.5;
     ray_d_x = pixel00.x + ((i + offset_x) * pixel_delta_u.x) +
               ((j + offset_x) * pixel_delta_v.x);
     ray_d_y = pixel00.y + ((i + offset_y) * pixel_delta_u.y) +
@@ -48,21 +48,26 @@ __global__ void render_kernel(double *R, double *G, double *B,
     double3 normal = make_double3(1.0, 0.0, 0.5);
 
     if (s.hit(r, t, normal)) {
-      R[idx] = 0.5 * (normal.x + 1);
-      G[idx] = 0.5 * (normal.y + 1);
-      B[idx] = 0.5 * (normal.z + 1);
+      R[idx] += 0.5 * (normal.x + 1);
+      G[idx] += 0.5 * (normal.y + 1);
+      B[idx] += 0.5 * (normal.z + 1);
     } else {
       double3 unit_direction = unit_vector(r.dir);
       double a = 0.5 * (unit_direction.y + 1.0);
-      R[idx] = (1.0 - a) + (a * 1.0);
-      G[idx] = (1.0 - a) + (a * 0.1);
-      B[idx] = (1.0 - a) + (a * 0.1);
+      R[idx] += (1.0 - a) + (a * 1.0);
+      G[idx] += (1.0 - a) + (a * 0.1);
+      B[idx] += (1.0 - a) + (a * 0.1);
     }
   }
 
-  // R[idx] /= (1.0 / (double)N_SAMPLES);
-  // G[idx] /= (1.0 / (double)N_SAMPLES);
-  // B[idx] /= (1.0 / (double)N_SAMPLES);
+	R[idx] /= (double)N_SAMPLES;
+	G[idx] /= (double)N_SAMPLES;
+	B[idx] /= (double)N_SAMPLES;
+
+	//R[idx] = clamp(R[idx], 0, 1);
+	//G[idx] = clamp(G[idx], 0, 1);
+	//B[idx] = clamp(G[idx], 0, 1);
+
 }
 
 // Function to initialize CUDA-related data and call the kernel
