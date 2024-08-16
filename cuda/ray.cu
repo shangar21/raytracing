@@ -16,7 +16,6 @@ struct ray {
     double at_z = orig.z + t * dir.z;
     return make_double3(at_x, at_y, at_z);
   }
-
 };
 
 #endif

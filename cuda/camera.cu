@@ -29,16 +29,16 @@ __global__ void render_kernel(double *R, double *G, double *B,
   curandState localState = state[idx];
 
   for (int _ = 0; _ < N_SAMPLES; _++) {
-    double offset_x = 0.0;// curand_uniform_double(&localState) - 0.5;
-    double offset_y = 0.0;//curand_uniform_double(&localState) - 0.5;
-    double offset_z = 0.0;//curand_uniform_double(&localState) - 0.5;
+    double offset_x = 0.0; // curand_uniform_double(&localState) - 0.5;
+    double offset_y = 0.0; // curand_uniform_double(&localState) - 0.5;
+    double offset_z = 0.0; // curand_uniform_double(&localState) - 0.5;
     ray_d_x = pixel00.x + ((i + offset_x) * pixel_delta_u.x) +
               ((j + offset_x) * pixel_delta_v.x);
     ray_d_y = pixel00.y + ((i + offset_y) * pixel_delta_u.y) +
               ((j + offset_y) * pixel_delta_v.y);
     ray_d_z = pixel00.z + ((i + offset_z) * pixel_delta_u.z) +
               ((j + offset_z) * pixel_delta_v.z);
-		
+
     double3 ray_o = make_double3(0.0, 0.0, 0.0);
     double3 ray_d = make_double3(ray_d_x, ray_d_y, ray_d_z);
 
@@ -52,17 +52,17 @@ __global__ void render_kernel(double *R, double *G, double *B,
       G[idx] = 0.5 * (normal.y + 1);
       B[idx] = 0.5 * (normal.z + 1);
     } else {
-			double3 unit_direction = unit_vector(r.dir);
-			double a = 0.5 * (unit_direction.y + 1.0);
-			R[idx] = (1.0 - a) + (a * 1.0);
-			G[idx] = (1.0 - a) + (a * 0.1);
-			B[idx] = (1.0 - a) + (a * 0.1);
-		}
+      double3 unit_direction = unit_vector(r.dir);
+      double a = 0.5 * (unit_direction.y + 1.0);
+      R[idx] = (1.0 - a) + (a * 1.0);
+      G[idx] = (1.0 - a) + (a * 0.1);
+      B[idx] = (1.0 - a) + (a * 0.1);
+    }
   }
 
-	//R[idx] /= (1.0 / (double)N_SAMPLES);
-	//G[idx] /= (1.0 / (double)N_SAMPLES);
-	//B[idx] /= (1.0 / (double)N_SAMPLES);
+  // R[idx] /= (1.0 / (double)N_SAMPLES);
+  // G[idx] /= (1.0 / (double)N_SAMPLES);
+  // B[idx] /= (1.0 / (double)N_SAMPLES);
 }
 
 // Function to initialize CUDA-related data and call the kernel

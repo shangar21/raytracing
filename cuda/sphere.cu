@@ -20,8 +20,8 @@ struct sphere {
       return false;
     }
 
-		double t1 = (-b - sqrt(discriminant)) / (2.0 * a);
-		double t2 = (-b + sqrt(discriminant)) / (2.0 * a);
+    double t1 = (-b - sqrt(discriminant)) / (2.0 * a);
+    double t2 = (-b + sqrt(discriminant)) / (2.0 * a);
 
     t = t1 > 0 ? t1 : t2;
     double3 p = r.at(t);
