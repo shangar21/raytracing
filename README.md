@@ -14,3 +14,7 @@ Current progress (anti-aliasing and multiple objects, with normals):
 Cuda version so far only ray traces a single sphere, no normals, but with antialiasing:
 
 ![rendered_image](https://github.com/user-attachments/assets/5cb90166-d9b2-432a-81c2-ceed2d2d3306)
+
+UPDATE: Cuda version now handles normals, and ray traces a single sphere with a gradient background. There is a bug with the antialiasing, but without antialiasing following image is generated:
+
+![rendered_image](https://github.com/user-attachments/assets/d61a02ca-d5a3-412c-a8eb-9649b074aab7)
