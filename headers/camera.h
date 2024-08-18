@@ -104,7 +104,7 @@ private:
 		if (depth <= 0) return point(0.0, 0.0, 0.0);
 
     if (world.hit(r, Interval<double>(0.001, infinity), rec)) {
-			point direction = random_on_hemisphere<double>(rec.normal);
+			point direction = rec.normal + random_unit_vector<double>();
       //return 0.5 * (rec.normal + color(1.0, 1.0, 1.0));
 			return 0.5 * ray_color(Ray(rec.p, direction), depth - 1, world);
     }
