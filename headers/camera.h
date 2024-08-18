@@ -12,6 +12,7 @@ public:
   int image_width = 1920;
   int samples_per_pixel = 3;
   int image_height = int(image_width / aspect_ratio);
+	int max_depth = 10;
 
   void render_ppm(const Hittable &world) {
     initialize();
@@ -23,7 +24,7 @@ public:
                              ((double)j * pixel_delta_v);
         point ray_dir = pixel_center - camera_center;
         Ray r = Ray(camera_center, ray_dir);
-        point pixel = ray_color(r, world);
+        point pixel = ray_color(r, max_depth, world);
         writeColor(std::cout, pixel);
       }
     }
@@ -44,7 +45,7 @@ public:
 
         for (int s = 0; s < samples_per_pixel; s++) {
           Ray<double> r = get_ray_sample(i, j);
-          pixel += ray_color(r, world);
+          pixel += ray_color(r, max_depth, world);
         }
 
         pixel = pixel * pixel_samples_scale;
@@ -97,16 +98,20 @@ private:
     return Ray(camera_center, ray_direction);
   }
 
-  color ray_color(const Ray<double> &r, const Hittable &world) {
+  color ray_color(const Ray<double> &r, int depth, const Hittable &world) {
     HitRecord rec;
 
-    if (world.hit(r, Interval<double>(0.0, infinity), rec)) {
-      return 0.5 * (rec.normal + color(1.0, 1.0, 1.0));
+		if (depth <= 0) return point(0.0, 0.0, 0.0);
+
+    if (world.hit(r, Interval<double>(0.001, infinity), rec)) {
+			point direction = random_on_hemisphere<double>(rec.normal);
+      //return 0.5 * (rec.normal + color(1.0, 1.0, 1.0));
+			return 0.5 * ray_color(Ray(rec.p, direction), depth - 1, world);
     }
 
     point unit_direction = unit_vector(r.direction());
     double a = 0.5 * (unit_direction.y() + 1.0);
-    return (1.0 - a) * color(1.0, 1.0, 1.0) + a * color(1.0, 0.1, 0.1);
+    return (1.0 - a) * color(1.0, 1.0, 1.0) + a * color(0.1, 0.1, 1.0);
   }
 };
 

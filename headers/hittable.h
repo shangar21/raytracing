@@ -17,7 +17,7 @@ public:
   HitRecord() {}
 
   void set_face_normal(const Ray<double> &r, const point &outward_normal) {
-    front = dot(r.direction(), outward_normal);
+    front = dot(r.direction(), outward_normal) > 0;
     normal = front ? outward_normal : -outward_normal;
   }
 };

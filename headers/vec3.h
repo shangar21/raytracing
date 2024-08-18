@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <iostream>
+#include "utils.h"
 
 template <typename T> class vec3 {
 public:
@@ -46,6 +47,14 @@ public:
   T length_squared() const {
     return (e[0] * e[0]) + (e[1] * e[1]) + (e[2] * e[2]);
   }
+
+	static vec3 random() {
+		return vec3(random_double(), random_double(), random_double());
+	}
+
+	static vec3 random(T min, T max) {
+		return vec3(random_double(min, max), random_double(min, max), random_double(min, max));
+	}
 };
 
 // Output stream operator
@@ -107,6 +116,24 @@ template <typename T> inline vec3<T> cross(const vec3<T> &u, const vec3<T> &v) {
 
 template <typename T> inline vec3<T> unit_vector(const vec3<T> &v) {
   return v / v.length();
+}
+
+template <typename T> inline vec3<T> random_in_unit_sphere(){
+	while(true){
+		vec3<T> p = vec3<T>::random(-1.0, 1.0);
+		if (p.length_squared() < 1){
+			return p;
+		}
+	}
+}
+
+template <typename T> inline vec3<T> random_unit_vector(){
+	return unit_vector(random_in_unit_sphere<T>());
+}
+
+template <typename T> inline vec3<T> random_on_hemisphere(const vec3<T>& normal){
+	vec3<T> on_unit_sphere = random_unit_vector<T>();
+	return dot(on_unit_sphere, normal) > 0.0 ? on_unit_sphere : -on_unit_sphere;
 }
 
 typedef vec3<double> point;
