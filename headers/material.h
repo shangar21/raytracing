@@ -17,7 +17,6 @@ public:
 
 class Lambertian : public Material {
 public:
-
   Lambertian(const point &albedo) : albedo(albedo) {}
 
   bool scatter(const Ray<double> &r_in, const HitRecord &rec,
@@ -31,24 +30,25 @@ public:
     attenuation = albedo;
     return true;
   }
+
 private:
-	point albedo;
+  point albedo;
 };
 
 class Metal : public Material {
 public:
-
   Metal(const point &albedo) : albedo(albedo) {}
 
   bool scatter(const Ray<double> &r_in, const HitRecord &rec,
                point &attenuation, Ray<double> &scattered) const override {
-		point reflected = reflect(r_in.direction(), rec.normal);
-		scattered = Ray(rec.p, reflected);
-		attenuation = albedo;
-		return true;
-	}
+    point reflected = reflect(r_in.direction(), rec.normal);
+    scattered = Ray(rec.p, reflected);
+    attenuation = albedo;
+    return true;
+  }
+
 private:
-	point albedo;
+  point albedo;
 };
 
 #endif
