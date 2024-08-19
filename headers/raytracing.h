@@ -16,6 +16,7 @@
 #include "camera.h"
 #include "color.h"
 #include "hittable.h"
+#include "material.h"
 #include "ray.h"
 #include "sphere.h"
 #include "vec3.h"

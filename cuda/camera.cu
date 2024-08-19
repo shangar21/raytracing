@@ -60,14 +60,13 @@ __global__ void render_kernel(double *R, double *G, double *B,
     }
   }
 
-	R[idx] /= (double)N_SAMPLES;
-	G[idx] /= (double)N_SAMPLES;
-	B[idx] /= (double)N_SAMPLES;
+  R[idx] /= (double)N_SAMPLES;
+  G[idx] /= (double)N_SAMPLES;
+  B[idx] /= (double)N_SAMPLES;
 
-	//R[idx] = clamp(R[idx], 0, 1);
-	//G[idx] = clamp(G[idx], 0, 1);
-	//B[idx] = clamp(G[idx], 0, 1);
-
+  // R[idx] = clamp(R[idx], 0, 1);
+  // G[idx] = clamp(G[idx], 0, 1);
+  // B[idx] = clamp(G[idx], 0, 1);
 }
 
 // Function to initialize CUDA-related data and call the kernel

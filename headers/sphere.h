@@ -8,8 +8,10 @@ class Sphere : public Hittable {
 public:
   double radius;
   point center;
+  std::shared_ptr<Material> mat;
 
-  Sphere(point center, double radius) : center(center), radius(radius) {}
+  Sphere(point center, double radius, std::shared_ptr<Material> mat)
+      : center(center), radius(radius), mat(mat) {}
 
   bool hit(const Ray<double> &r, Interval<double> ray_t, HitRecord &rec) const {
     point oc = center - r.origin();
@@ -29,6 +31,7 @@ public:
         rec.t = t;
         rec.p = p;
         rec.set_face_normal(r, normal);
+        rec.mat = mat;
         return true;
       }
     }

@@ -7,12 +7,15 @@
 #include <memory>
 #include <vector>
 
+class Material;
+
 class HitRecord {
 public:
   point p;
   point normal;
   double t;
   bool front;
+  std::shared_ptr<Material> mat;
 
   HitRecord() {}
 

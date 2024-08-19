@@ -3,6 +3,7 @@
 
 #include "color.h"
 #include "hittable.h"
+#include "material.h"
 #include "utils.h"
 #include "vec3.h"
 
@@ -12,7 +13,7 @@ public:
   int image_width = 1920;
   int samples_per_pixel = 3;
   int image_height = int(image_width / aspect_ratio);
-	int max_depth = 10;
+  int max_depth = 10;
 
   void render_ppm(const Hittable &world) {
     initialize();
@@ -50,9 +51,9 @@ public:
 
         pixel = pixel * pixel_samples_scale;
 
-        R.at<double>(j, i) = intensity.clamp(pixel.x());
-        G.at<double>(j, i) = intensity.clamp(pixel.y());
-        B.at<double>(j, i) = intensity.clamp(pixel.z());
+        R.at<double>(j, i) = linear_to_gamma(intensity.clamp(pixel.x()));
+        G.at<double>(j, i) = linear_to_gamma(intensity.clamp(pixel.y()));
+        B.at<double>(j, i) = linear_to_gamma(intensity.clamp(pixel.z()));
       }
     }
 
@@ -101,12 +102,15 @@ private:
   color ray_color(const Ray<double> &r, int depth, const Hittable &world) {
     HitRecord rec;
 
-		if (depth <= 0) return point(0.0, 0.0, 0.0);
+    if (depth <= 0)
+      return point(0.0, 0.0, 0.0);
 
     if (world.hit(r, Interval<double>(0.001, infinity), rec)) {
-			point direction = rec.normal + random_unit_vector<double>();
-      //return 0.5 * (rec.normal + color(1.0, 1.0, 1.0));
-			return 0.5 * ray_color(Ray(rec.p, direction), depth - 1, world);
+      Ray<double> scattered;
+      point attenuation;
+      if (rec.mat->scatter(r, rec, attenuation, scattered))
+        return attenuation * ray_color(scattered, depth - 1, world);
+      return point(0.0, 0.0, 0.0);
     }
 
     point unit_direction = unit_vector(r.direction());
