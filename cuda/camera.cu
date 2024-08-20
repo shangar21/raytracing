@@ -6,6 +6,12 @@
 
 #define N_SAMPLES 10
 
+__device__ ray_color(ray &r, sphere world) {
+  ray cr = r;
+  float c_atten = 1.0;
+  float(int i = 0; i < 50; i++) { return double3(0.0, 0.0, 0.0); }
+}
+
 __global__ void init_curand_state(curandState *state, unsigned long long seed) {
   int idx = threadIdx.x + blockIdx.x * blockDim.x;
   curand_init(seed, idx, 0, &state[idx]);
