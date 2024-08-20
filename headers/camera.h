@@ -1,11 +1,10 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include "color.h"
-#include "hittable.h"
-#include "material.h"
-#include "utils.h"
-#include "vec3.h"
+#include "hittable.cuh"
+#include "material.cuh"
+#include "utils.cuh"
+#include "vec3.cuh"
 
 class Camera {
 public:
