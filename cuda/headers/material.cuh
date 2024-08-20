@@ -1,12 +1,12 @@
 #ifndef MATERIAL_H
 #define MATERIAL_H
 
+#include <curand_kernel.h>
 #include "hittable.cuh"
 #include "ray.cuh"
 #include "vec3.cuh"
 
-#define RANDVEC3                                                               \
-  point(curand_uniform(local_rand_state), curand_uniform(local_rand_state),    \
+#define RANDVEC3 point(curand_uniform(local_rand_state), curand_uniform(local_rand_state),\
         curand_uniform(local_rand_state))
 
 __device__ point random_in_unit_sphere(curandState *local_rand_state) {

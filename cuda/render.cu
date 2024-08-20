@@ -1,14 +1,14 @@
+#include <cmath>
+#include <cuda_runtime.h>
+#include <curand_kernel.h>
+#include <iostream>
+#include <time.h>
 #include "headers/camera.cuh"
 #include "headers/hittable.cuh"
 #include "headers/material.cuh"
 #include "headers/ray.cuh"
 #include "headers/sphere.cuh"
 #include "headers/vec3.cuh"
-#include <cmath>
-#include <cuda_runtime.h>
-#include <curand_kernel.h>
-#include <iostream>
-#include <time.h>
 
 #define N_SAMPLES 10
 
@@ -24,7 +24,7 @@ __device__ point ray_color(Ray<double> &r, Hittable **world,
     if ((*world)->hit(tmp_ray, Interval(0.001, inf), rec)) {
       Ray<double> scattered;
       point tmp_attenuation;
-      if (rec.mat->scatter(tmp_ray, rec, attenuation, scattered,
+      if (rec.mat->scatter(tmp_ray, rec, tmp_attenuation, scattered,
                            local_rand_state)) {
         attenuation = attenuation * tmp_attenuation;
         tmp_ray = scattered;
