@@ -1,14 +1,14 @@
-#include <cmath>
-#include <cuda_runtime.h>
-#include <curand_kernel.h>
-#include <iostream>
-#include <time.h>
 #include "headers/camera.cuh"
 #include "headers/hittable.cuh"
 #include "headers/material.cuh"
 #include "headers/ray.cuh"
 #include "headers/sphere.cuh"
 #include "headers/vec3.cuh"
+#include <cmath>
+#include <cuda_runtime.h>
+#include <curand_kernel.h>
+#include <iostream>
+#include <time.h>
 
 #define N_SAMPLES 10
 
