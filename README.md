@@ -18,3 +18,7 @@ Cuda version so far only ray traces a single sphere, no normals, but with antial
 UPDATE: Cuda version now handles normals, and ray traces a single sphere with a gradient background. There is a bug with the antialiasing, but without antialiasing following image is generated:
 
 ![rendered_image](https://github.com/user-attachments/assets/d61a02ca-d5a3-412c-a8eb-9649b074aab7)
+
+UPDATE: Following this fire repo: https://github.com/rogerallen/raytracinginoneweekendincuda was able to get the CUDA running really well with classes.
+
+![rendered_image](https://github.com/user-attachments/assets/be5e80f9-f26a-442d-9262-7f881939377e)
